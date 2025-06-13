@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-import openai
+from openai import OpenAI
 
 load_dotenv()
 
@@ -9,7 +9,8 @@ print("🔑 Using Key:", os.getenv("OPENAI_API_KEY")[:10])
 # Ensure the API key is in the environment
 api_key = os.getenv("OPENAI_API_KEY")
 if api_key:
-    openai.api_key = api_key
+    os.environ["OPENAI_API_KEY"] = api_key
+client = OpenAI()
 
 def format_chunk(chunk):
     """Convert context chunk (dict or str) into a readable string."""
@@ -59,7 +60,7 @@ Be direct and specific in your recommendations. If discussing rookies, acknowled
         {"role": "user", "content": f"Using this context about fantasy football players:\n\n{context_text}\n\nAnswer this question: {query}"}
     ]
 
-    response = openai.chat.completions.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=messages,
         temperature=0.7,
