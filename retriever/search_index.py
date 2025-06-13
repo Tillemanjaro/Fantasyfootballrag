@@ -37,50 +37,48 @@ except Exception as e:
     logger.error(f"Failed to set OpenAI API key at module level: {str(e)}")
 
 def search_index(query, top_k=5):
-    """Search the vector index for relevant context"""
+    """Search for relevant context using sentence-transformers"""
     try:
-        get_openai_client()  # Ensure key is set
-        # Create embeddings for the query
-        response = openai.embeddings.create(
-            input=query,
-            model="text-embedding-ada-002"
-        )
-        query_embedding = response.data[0].embedding
-        
-        # Load FAISS index and metadata
-        import faiss
+        from sentence_transformers import SentenceTransformer
         import pickle
         from pathlib import Path
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
         
+        # Load pre-trained model
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+        
+        # Get query embedding
+        query_embedding = model.encode([query])[0]
+        
+        # Load metadata and embeddings
         data_dir = Path(__file__).parent.parent / "data"
-        faiss_path = data_dir / "fantasy_index.faiss"
         metadata_path = data_dir / "fantasy_metadata.pkl"
+        embeddings_path = data_dir / "fantasy_embeddings.npy"
         
-        if not faiss_path.exists():
-            logger.error(f"FAISS index not found at {faiss_path}")
-            st.error("Fantasy football data needs to be indexed first. Please run build_faiss_index.py")
+        if not metadata_path.exists() or not embeddings_path.exists():
+            logger.error("Fantasy football data not found")
+            st.error("Fantasy football data needs to be indexed first")
             return []
             
-        # Load index and metadata
-        index = faiss.read_index(str(faiss_path))
+        # Load data
         with open(metadata_path, "rb") as f:
             metadata = pickle.load(f)
-            
-        # Normalize query vector
-        query_vector = np.array([query_embedding]).astype('float32')
-        faiss.normalize_L2(query_vector)
+        embeddings = np.load(embeddings_path)
         
-        # Search
-        scores, indices = index.search(query_vector, top_k)
+        # Calculate similarities
+        similarities = cosine_similarity([query_embedding], embeddings)[0]
         
-        # Get results with metadata
+        # Get top k results
+        top_indices = np.argsort(similarities)[-top_k:][::-1]
+        
+        # Format results
         results = []
-        for score, idx in zip(scores[0], indices[0]):
-            if idx >= 0:  # Valid index
-                result = metadata[idx]
-                result['score'] = float(score)
-                results.append(result)
-                
+        for idx in top_indices:
+            result = metadata[idx]
+            result['score'] = float(similarities[idx])
+            results.append(result)
+            
         return results
     except Exception as e:
         logger.error(f"Search error: {str(e)}")
