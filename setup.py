@@ -10,9 +10,9 @@ setup(
         'openai==1.12.0',
         'python-dotenv==1.0.0',
         'requests==2.31.0',
-        'numpy==1.24.3',
-        'pandas==1.5.3',
-        'scipy==1.10.1',
+        'numpy==1.25.2',
+        'pandas==2.0.3',
+        'scipy==1.11.4',
         'rich==13.7.0'
     ]
 )
