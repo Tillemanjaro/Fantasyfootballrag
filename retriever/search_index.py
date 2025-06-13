@@ -37,24 +37,18 @@ except Exception as e:
     logger.error(f"Failed to set OpenAI API key at module level: {str(e)}")
 
 def search_index(query, top_k=5):
-    """Search for relevant context using transformers"""
+    """Search for relevant context using OpenAI embeddings"""
     try:
-        from transformers import AutoTokenizer, AutoModel
-        import torch
         import pickle
         from pathlib import Path
         import numpy as np
         
-        # Load pre-trained model and tokenizer
-        model_name = 'sentence-transformers/all-MiniLM-L6-v2'
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModel.from_pretrained(model_name)
-        
-        # Tokenize and get embeddings for query
-        inputs = tokenizer(query, padding=True, truncation=True, return_tensors="pt")
-        with torch.no_grad():
-            outputs = model(**inputs)
-            query_embedding = outputs.last_hidden_state.mean(dim=1).numpy()[0]
+        # Use OpenAI embeddings instead of local model
+        response = openai.embeddings.create(
+            input=query,
+            model="text-embedding-ada-002"
+        )
+        query_embedding = np.array(response.data[0].embedding)
         
         # Load metadata and embeddings
         data_dir = Path(__file__).parent.parent / "data"
