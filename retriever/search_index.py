@@ -37,19 +37,24 @@ except Exception as e:
     logger.error(f"Failed to set OpenAI API key at module level: {str(e)}")
 
 def search_index(query, top_k=5):
-    """Search for relevant context using sentence-transformers"""
+    """Search for relevant context using transformers"""
     try:
-        from sentence_transformers import SentenceTransformer
+        from transformers import AutoTokenizer, AutoModel
+        import torch
         import pickle
         from pathlib import Path
         import numpy as np
-        from sklearn.metrics.pairwise import cosine_similarity
         
-        # Load pre-trained model
-        model = SentenceTransformer('all-MiniLM-L6-v2')
+        # Load pre-trained model and tokenizer
+        model_name = 'sentence-transformers/all-MiniLM-L6-v2'
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModel.from_pretrained(model_name)
         
-        # Get query embedding
-        query_embedding = model.encode([query])[0]
+        # Tokenize and get embeddings for query
+        inputs = tokenizer(query, padding=True, truncation=True, return_tensors="pt")
+        with torch.no_grad():
+            outputs = model(**inputs)
+            query_embedding = outputs.last_hidden_state.mean(dim=1).numpy()[0]
         
         # Load metadata and embeddings
         data_dir = Path(__file__).parent.parent / "data"
@@ -66,8 +71,8 @@ def search_index(query, top_k=5):
             metadata = pickle.load(f)
         embeddings = np.load(embeddings_path)
         
-        # Calculate similarities
-        similarities = cosine_similarity([query_embedding], embeddings)[0]
+        # Calculate similarities using dot product
+        similarities = np.dot(embeddings, query_embedding)
         
         # Get top k results
         top_indices = np.argsort(similarities)[-top_k:][::-1]
