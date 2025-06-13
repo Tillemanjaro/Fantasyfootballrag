@@ -1,4 +1,11 @@
 import streamlit as st
+import sys
+from pathlib import Path
+
+# Add the project root directory to Python path
+root_dir = Path(__file__).parent
+sys.path.append(str(root_dir))
+
 from retriever.search_index import search_index
 from retriever.ask_rag import ask_rag
 import os
