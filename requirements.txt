@@ -1,9 +1,14 @@
+# Setup tools
+wheel==0.42.0
+setuptools==69.1.1
+
 # Core requirements
 streamlit==1.31.0
 openai==1.12.0
 python-dotenv==1.0.0
 
 # ML dependencies
+sentencepiece==0.1.99
 sentence-transformers==2.2.2
 scikit-learn==1.3.0
 numpy==1.24.3
@@ -12,3 +17,7 @@ pandas==2.0.3
 # Basic utilities
 requests==2.31.0
 tqdm==4.66.1
+
+# Additional dependencies
+protobuf>=3.20.0
+torch>=2.0.0
