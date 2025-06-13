@@ -9,13 +9,11 @@ setup(
         'openai==1.12.0',
         'python-dotenv==1.0.0',
         'requests==2.31.0',
+        'pandas==1.5.3',
         'numpy==1.24.3',
-        'pandas==2.0.3',
-        'tqdm==4.66.1',
-        'sentencepiece==0.1.99',
-        'sentence-transformers==2.2.2',
-        'scikit-learn==1.3.0',
-        'protobuf>=3.20.0',
-        'torch>=2.0.0'
+        'torch==2.1.0+cpu',
+        'transformers==4.36.0',
+        'tokenizers==0.15.0',
+        'scikit-learn==1.2.2'
     ],
 )
