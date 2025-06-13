@@ -12,8 +12,6 @@ setup(
         'pandas==1.5.3',
         'numpy==1.24.3',
         'torch==2.1.0+cpu',
-        'torchvision==0.16.0+cpu',
-        'torchaudio==2.1.0+cpu',
         'transformers==4.36.0',
         'tokenizers==0.15.0',
         'scikit-learn==1.2.2',
