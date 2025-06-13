@@ -1,19 +1,28 @@
+# First, specify PyPI as the primary index
+--index-url https://pypi.org/simple
+
+# Then add PyTorch index for CPU wheels
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # Core requirements
 streamlit==1.31.0
 openai==1.12.0
 python-dotenv==1.0.0
-
-# Basic utilities
 requests==2.31.0
-pandas==1.5.3
+
+# Data science packages (pre-built wheels)
 numpy==1.24.3
+pandas==1.5.3
 
 # ML and NLP dependencies
---find-links https://download.pytorch.org/whl/torch_stable.html
 torch==2.1.0+cpu
 transformers==4.36.0
 tokenizers==0.15.0
 scikit-learn==1.2.2
 
-# Pin rich to avoid streamlit conflict
+# Dependencies with specific constraints
 rich>=10.14.0,<14.0.0
+protobuf<5,>=3.20
+
+# Add setuptools explicitly
+setuptools>=65.5.1
