@@ -1,8 +1,9 @@
-streamlit
-openai
-python-dotenv
-requests
-faiss-cpu
-numpy
-pandas
-tqdm
+-e .
+streamlit==1.31.0
+openai==1.12.0
+python-dotenv==1.0.0
+requests==2.31.0
+faiss-cpu==1.7.4
+numpy==1.26.3
+pandas==2.1.4
+tqdm==4.66.1
